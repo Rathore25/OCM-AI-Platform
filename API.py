@@ -7,16 +7,21 @@ Created on Thu Aug  5 02:33:34 2021
 import logging
 import sys
 from flask import Flask, jsonify, request
+from flask_cors import CORS, cross_origin
 from Main import Main
 
 main    = Main()
 app     = Flask(__name__)
+cors    = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route('/', methods=['GET'])
+@cross_origin()
 def home():
     return "<h1>Home</h1><p>This site is a prototype API for OCM Advisory - AI Platform.</p>"
 
 @app.route('/start/', methods=['POST'])
+@cross_origin()
 def start():
     try:
         #parameters  = request.args.to_dict()

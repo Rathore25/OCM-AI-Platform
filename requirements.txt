@@ -11,6 +11,7 @@ colorama==0.4.4
 cryptography==3.4.7
 elasticsearch==7.14.0
 Flask==1.1.2
+Flask-Cors==3.0.10
 google-search-results==2.4.0
 idna==3.1
 itsdangerous==2.0.1
