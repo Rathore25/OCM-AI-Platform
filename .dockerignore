@@ -1,4 +1,6 @@
 Services/*
+__pycache__/*
+.git/*
 docker-compose.yml
 Dockerfile
 variables.env
