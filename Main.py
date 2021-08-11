@@ -25,35 +25,29 @@ class Main():
             
         return results
     
-    def validateInput(self, formData):
-        if len(formData) == 0 or 'queries' not in formData or len(formData['queries']) == 0:
+    def validateInput(self, postData):
+        if len(postData) == 0 or 'queries' not in postData or len(postData['queries']) == 0:
             raise ValueError("Query is missing in form data!")
     
-    def getInput(self, formData):
-        queries     = str(formData.get('queries'))
+    def getInput(self, postData):
+        queries     = str(postData.get('queries', ''))
         queries     = queries.split(',')
-        count       = str(formData.get('count', '100'))
-        location    = str(formData.get('location', 'united states'))
+        count       = str(postData.get('count', '100'))
+        location    = str(postData.get('location', 'united states'))
         
         return (queries, count, location)
         
-        
-    def startProcessing(self, formData):
+    def startProcessing(self, postData):
         # Validate input
-        print("Validating input!")
-        self.validateInput(formData)
+        self.validateInput(postData)
         
         # Get the input
-        print("Extracting the input!")
-        queries, count, location = self.getInput(formData)
+        queries, count, location    = self.getInput(postData)
+        startTime                   = time.time()
+        totalCount                  = 0
         
-        logging.debug("Queries: " + ",".join(queries))
-        
-        startTime = time.time()
-        
-        print("Starting the processing of queries!")
         for num, query in enumerate(queries):
-            logging.debug('{0} - {1} - {2} - {3}'.format(num, query, count, location))
+            logging.debug('Processing : {0} - {1} - {2} - {3}'.format(num, query, count, location))
             try:
                 search_results = self.webAPI.getSearchResults(query, count, location)
                 
@@ -66,12 +60,14 @@ class Main():
                         continue
                     
                     self.ESManager.pushURLContents(url, query, title, text)
+                    totalCount += 1
             except:
-                print("ERROR_IN_startProcessing. Query:", query, sys.exc_info()[0], sys.exc_info()[1])
                 logging.exception("ERROR_IN_startProcessing. Query:" + query + ' ' + str(sys.exc_info()[0]) + ' ' + str(sys.exc_info()[1]))
         
-        print("Completed processing the queries!")
-        print("Time taken(seconds):", time.time() - startTime)
+        logging.debug("Time taken(seconds):" + str(time.time() - startTime) + " seconds")
         logging.debug("Completed!")
         
-        return {'Status':'Complete'}
+        return {'Status':'Complete', 'Total':totalCount}
+    
+    def getGridData(self, query="", pageNo=0, pageSize=100):
+        return self.ESManager.search(query, pageNo, pageSize)

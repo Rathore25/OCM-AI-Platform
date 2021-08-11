@@ -20,17 +20,39 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 def home():
     return "<h1>Home</h1><p>This site is a prototype API for OCM Advisory - AI Platform.</p>"
 
-@app.route('/start/', methods=['POST'])
+@app.route('/api/v1/process/', methods=['POST'])
 @cross_origin()
-def start():
+def process():
     try:
-        #parameters  = request.args.to_dict()
-        formData    = request.form.to_dict()
+        postData    = request.get_json()
         
-        return jsonify(main.startProcessing(formData))
+        return jsonify(main.startProcessing(postData))
     except:
         app.logger.error(str(sys.exc_info()[0]) + ' ' + str(sys.exc_info()[1]))
         return jsonify({'Status':'Error','Message':str(sys.exc_info()[1])})
+
+@app.route('/api/v1/search/', methods=['POST'])
+@cross_origin()
+def search():
+    try:
+        postData    = request.get_json()
+        query       = ""
+        pageNumber  = 0
+        pageSize    = 100
+        
+        if "query" in postData:
+            query = str(postData["query"]).strip()
+        if "pageNumber" in postData:
+            pageNumber = int(str(postData["pageNumber"]))
+        if "pageSize" in postData:
+            pageSize = int(str(postData["pageSize"]))
+        
+        logging.debug('Search : query - {0}  pageNo - {1}  pageSize - {2}'.format(query, pageNumber, pageSize))
+        
+        return jsonify(main.getGridData(query, pageNumber, pageSize))
+    except:
+        app.logger.error(str(sys.exc_info()[0]) + ' ' + str(sys.exc_info()[1]))
+        return jsonify({'Status':'Error', 'Message': str(sys.exc_info()[1])})
 
 logging.basicConfig(filename="logFile.txt",
             level=logging.DEBUG,

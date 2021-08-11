@@ -53,3 +53,35 @@ class ESManager():
         client      = self.getClient()
         response    = client.index(index = index, id = id, body = body)
         return response
+    
+    def search(self, query:str, pageNo = 0, pageSize = 100):
+        if query is None:
+            query = ""
+        
+        query   = (query.strip()).lower()
+        fromId  = pageNo * pageSize
+        
+        searchBody = {
+            "from": fromId,
+            "size": pageSize,
+            "query": {
+                "multi_match": {
+                    "query": query
+                    }
+                }
+            }
+        
+        searchBody1 = {
+            "from": fromId,
+            "size": pageSize,
+            "query": {
+                "query_string": {
+                    "query": query
+                    }
+                }
+            }
+        
+        client      = self.getClient()
+        response    = client.search(index=self.urlContentIndexName,body=searchBody1)
+                
+        return response
