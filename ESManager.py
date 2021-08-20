@@ -8,6 +8,7 @@ import logging
 from SettingsHelper import SettingsHelper
 from elasticsearch import Elasticsearch
 import sys
+import time
 
 class ESManager():
     def __init__(self):
@@ -43,7 +44,7 @@ class ESManager():
     # Push to Elasticsearch
     def pushURLContents(self, url, query, title, text):
         try:
-            body        = {'title':title, 'content':text, 'query': query}
+            body        = {'title':title, 'content':text, 'query': query, 'modifiedon': time.time(), 'relevance': -1}
             response    = self.push(self.urlContentIndexName, url, body)
         except:
             logging.exception("ERROR in pushURLContents - " + str(sys.exc_info()[0]) + ' ' + str(sys.exc_info()[1]))
@@ -52,6 +53,20 @@ class ESManager():
     def push(self, index, id, body):
         client      = self.getClient()
         response    = client.index(index = index, id = id, body = body)
+        return response
+
+    # update
+    
+    def updateRelevance(self, url, relevance):
+        try:
+            body        = { "doc": { 'relevance' : relevance } }
+            response    = self.update(self.urlContentIndexName, url, body)
+        except:
+            logging.exception("ERROR in updateRelevance - " + str(sys.exc_info()[0]) + ' ' + str(sys.exc_info()[1]))
+    
+    def update(self, index, id, body):
+        client      = self.getClient()
+        response    = client.update(index = index, id = id, body = body)
         return response
     
     def search(self, query:str, pageNo = 0, pageSize = 100):

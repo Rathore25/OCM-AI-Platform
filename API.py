@@ -54,6 +54,19 @@ def search():
         app.logger.error(str(sys.exc_info()[0]) + ' ' + str(sys.exc_info()[1]))
         return jsonify({'Status':'Error', 'Message': str(sys.exc_info()[1])})
 
+@app.route('/api/v1/update/relevance/', methods=['POST'])
+@cross_origin()
+def updateRelevance():
+    try:
+        postData    = request.get_json()
+        
+        main.updateRelevance(postData['url'], postData['relevance'])
+        
+        return jsonify({'status':'Success'})
+    except:
+        app.logger.error(str(sys.exc_info()[0]) + ' ' + str(sys.exc_info()[1]))
+        return jsonify({'Status':'Error','Message':str(sys.exc_info()[1])})
+
 logging.basicConfig(filename="logFile.txt",
             level=logging.DEBUG,
             format="%(asctime)s %(levelname)s %(module)s - %(funcName)s: %(message)s",
