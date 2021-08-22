@@ -16,8 +16,8 @@
 				"type": "text"
 			},
 			"relevance":{
-				"type": "byte"
-				"null_value": -1
+				"type": "half_float"
+				"null_value": -1.0
 			},
 			"modifiedon":{
 				"type": "date"

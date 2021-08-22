@@ -44,7 +44,7 @@ class ESManager():
     # Push to Elasticsearch
     def pushURLContents(self, url, query, title, text):
         try:
-            body        = {'title':title, 'content':text, 'query': query, 'modifiedon': time.time(), 'relevance': -1}
+            body        = {'title':title, 'content':text, 'query': query, 'modifiedon': time.time(), 'relevance': -1.0}
             response    = self.push(self.urlContentIndexName, url, body)
         except:
             logging.exception("ERROR in pushURLContents - " + str(sys.exc_info()[0]) + ' ' + str(sys.exc_info()[1]))
@@ -69,6 +69,39 @@ class ESManager():
         response    = client.update(index = index, id = id, body = body)
         return response
     
+    def getLabelledDataset(self, dataSetMaxSize = 10000):
+        client = self.getClient()
+        
+        searchBody = {
+            "size": 10,
+            "query": {
+                "bool":{
+                    "should": [
+                        {"term": {"relevance":1}},
+                        {"term": {"relevance":0}}
+                        ]
+                    }
+                }
+            }
+        
+        result      = []
+        
+        try:
+            response    = client.search(index=self.urlContentIndexName,body=searchBody,scroll='2s')
+            hits        = response['hits']['hits']
+            scrollId    = response['_scroll_id']
+            
+            while hits and len(result) < dataSetMaxSize:
+                result.extend(hits)
+                
+                scrollResponse  = client.scroll(scroll_id=scrollId, scroll='2s')
+                hits            = scrollResponse['hits']['hits']
+                scrollId        = scrollResponse['_scroll_id']
+        except:
+            logging.exception("ERROR in getLabelledDataset - " + str(sys.exc_info()[0]) + ' ' + str(sys.exc_info()[1]))
+        
+        return result
+    
     def search(self, query:str, pageNo = 0, pageSize = 100):
         if query is None:
             query = ""
@@ -80,16 +113,6 @@ class ESManager():
             "from": fromId,
             "size": pageSize,
             "query": {
-                "multi_match": {
-                    "query": query
-                    }
-                }
-            }
-        
-        searchBody1 = {
-            "from": fromId,
-            "size": pageSize,
-            "query": {
                 "query_string": {
                     "query": query
                     }
@@ -97,6 +120,6 @@ class ESManager():
             }
         
         client      = self.getClient()
-        response    = client.search(index=self.urlContentIndexName,body=searchBody1)
+        response    = client.search(index=self.urlContentIndexName,body=searchBody)
                 
         return response

@@ -7,15 +7,18 @@ Created on Tue Aug  3 18:35:13 2021
 from ESManager import ESManager
 from WebAPI import WebAPI
 from URLHelper import URLHelper
+from LanguageModel import LanguageModel
 import sys
 import logging
 import time
+
 
 class Main():
     def __init__(self):
         self.webAPI     = WebAPI()
         self.ESManager  = ESManager()
         self.URLHelper  = URLHelper()
+        self.LangModel  = LanguageModel()
     
     def getRelatedURLs(self, queries, location, count='100'):
         results = []
@@ -74,3 +77,6 @@ class Main():
     
     def updateRelevance(self, url, relevance=0):
         return self.ESManager.updateRelevance(url, relevance)
+    
+    def trainModel(self):
+        return self.LangModel.buildModel()
