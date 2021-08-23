@@ -10,8 +10,8 @@ services:
       - discovery.type=single-node
     volumes:
       - es-data:/usr/share/elasticsearch/data
-      - ./Services/Elasticsearch/stoplist.txt:/usr/share/elasticsearch/config/my_stoplist.txt
-      - ./Services/Elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./python-api-service/Services/Elasticsearch/stoplist.txt:/usr/share/elasticsearch/config/my_stoplist.txt
+      - ./python-api-service/Services/Elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     networks:
       - crawlernet  
     healthcheck:
@@ -20,13 +20,14 @@ services:
       timeout: 3s
       retries: 60
   ocm_ai_job:
-    build: .
+    build:
+      context: ./python-api-service
     command: python ./API.py
     ports:
       - 5001:5001
     container_name: ocm_api_container
     env_file:
-      - ./.env
+      - ./python-api-service/.env
     environment:
       - APP_VERSION:V1
       - SERP_API_KEY:${SERP_API_KEY}

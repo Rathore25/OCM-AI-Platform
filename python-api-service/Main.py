@@ -75,7 +75,7 @@ class Main():
     def getGridData(self, query="", pageNo=0, pageSize=100):
         return self.ESManager.search(query, pageNo, pageSize)
     
-    def updateRelevance(self, url, relevance=0):
+    def updateRelevance(self, url, relevance=0.0):
         return self.ESManager.updateRelevance(url, relevance)
     
     def trainModel(self):
