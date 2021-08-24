@@ -60,7 +60,7 @@ services:
       context: ./ocm_website
     command: npm start
     ports:
-      - 8085:8085
+      - 3000:3000
     container_name: ocm_website_container
     volumes:
       - './ocm_website:/app'
