@@ -47,7 +47,7 @@ app.all('*', (req, res, next) => {
     next(new AppError(`Route ${req.originalUrl} not found!!`));
 })
 
-app.use(errorHandler);
+// app.use(errorHandler);
 
 app.listen(8000, () => {
     console.log("Listening on port 8000!!");

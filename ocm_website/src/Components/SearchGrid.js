@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import SearchResult from './SearchResult'
-import { makeStyles, TextField } from '@material-ui/core'
+import { Button, makeStyles, TextField } from '@material-ui/core'
 import Grid from '@material-ui/core/Grid';
 
 import "./SearchGrid.css"
@@ -23,40 +23,36 @@ const useStyles = makeStyles({
     },
     searchSearchItem: {
         width: "100%",
-        margin: "0"
+        margin: "0",
+        display: "flex"
     },
     searchField: {
         width: "100%",
         marginBottom: "-5px"
+    },
+    searchButton: {
+        height: "fit-content",
+        marginLeft: "10px"
     }
   })
 
 export default (props) => {
     const classes = useStyles();
 
-    const [searchField, setSearchField] = useState("");
-
-    const filteredResults = props.searchResults.filter(el => 
-        el.title.toLowerCase().includes(searchField.toLowerCase())
-    );
-
-    const handleOnSearchChange = (e) => {
-        setSearchField(e.target.value);
-      }
-
     return (
         <div className={classes.searchGridContainer}>
             <Grid container >
                 <Grid item xs={9}>
-                  <h3> Top {filteredResults.length} Results </h3>  
+                  <h3> Top {props.searchResults.length} Results </h3>  
                 </Grid>
                 <Grid item xs={3} className={classes.searchSearchItem}>
-                   <TextField className={classes.searchField} placeholder="Search" onChange={handleOnSearchChange} /> 
+                   <TextField className={classes.searchField} value={props.search} onChange={props.handleOnSearchChange} placeholder="Search"/> 
+                   <Button variant="outlined" color="primary" onClick={props.handleOnSearch} className={classes.searchButton}> Submit </Button>
                 </Grid>
             </Grid>
             <div className={classes.searchGrid}>
-                {filteredResults.map(result => {
-                    return <SearchResult key={result.id} name={result.id} content={result.content} title={result.title} query={result.query}/>
+                {props.searchResults.map(result => {
+                    return <SearchResult handleOnNo={props.handleOnNo} handleOnYes={props.handleOnYes} key={result.id} name={result.id} marked={result.marked} selection={result.selection} content={result.content} title={result.title} query={result.query} relevance={result.relevance}/>
                 })}
             </div>
         </div>

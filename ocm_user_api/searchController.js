@@ -9,23 +9,32 @@ exports.process = catchAsync(async (req, res, next) => {
         location: req.body.location
     })
 
-    console.log(result);
-
     if (result.data.Status !== "Complete") {
         return next(new AppError("Error while processing your request, please try again!!"));
     }
 
+    // const query = modifyQuery(req.body.queries);
+    // const searchResults = await axios.post("http://54.242.116.121:5001/api/v1/search/", {
+    //     query,
+    //     pageSize: req.body.pageSize,
+    //     pageNumber: req.body.pageNumber
+    // })
+
+    // if (!searchResults) {
+    //     return next(new AppError("Search failed!!"));
+    // }
+
+    // const data = searchResults.data.hits.hits;
+    // console.log("successful")
+
     res.status(200).json({
         status: "Success",
-        // queries: req.body.queries,
-        // count: req.body.count,
-        // location: req.body.location
-        data: result
+        // data
     })
 });
 
-exports.search = catchAsync(async (req, res, next) => {
-    const resultsArray = req.body.csv.split(",");
+const modifyQuery = (csv) => {
+    const resultsArray = csv.split(",");
     let query = "";
     resultsArray.forEach(result => {
         query += "(" + result + ")";
@@ -33,21 +42,40 @@ exports.search = catchAsync(async (req, res, next) => {
     });
 
     query = query.slice(0, -4);
+    return query;
+}
+
+exports.search = catchAsync(async (req, res, next) => {
+    const query = modifyQuery(req.body.csv);
     const searchRes = await axios.post("http://54.242.116.121:5001/api/v1/search/", {
         query,
-        pageMaximum: req.body.count,
+        pageSize: req.body.pageSize,
         pageNumber: req.body.pageNumber
     })
 
     if (!searchRes) {
         return next(new AppError("Search failed!!"));
     }
-
+    console.log(searchRes);
     const data = searchRes.data.hits.hits;
 
     res.status(200).json({
         status: "Success",
-        // query
         data
     })
 });
+
+exports.relevant = catchAsync(async (req, res, next) => {
+    const relevanceRes = await axios.post("http://54.242.116.121:5001/api/v1/update/relevance/", {
+        url: req.body.url,
+        relevance: req.body.relevance
+    });
+
+    if (relevanceRes.data.status !== 'Success') {
+        return next(new AppError("Error updating relevance, please try again later", 401));
+    }
+
+    res.status(200).json({
+        status: "Success"
+    })
+}) 

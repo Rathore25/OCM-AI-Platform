@@ -23,7 +23,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function CountrySelect({handleChange}) {
+export default function CountrySelect({handleChange, location}) {
   const classes = useStyles();
 
   return (
@@ -49,6 +49,7 @@ export default function CountrySelect({handleChange}) {
           label={<EditLocationIcon />}
           variant="outlined"
           placeholder="Country"
+          value={location}
           inputProps={{
             ...params.inputProps
           }}

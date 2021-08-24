@@ -10,4 +10,7 @@ searchRouter.route('/process')
 searchRouter.route('/search')
 .post(authController.authorize, authController.restrictTo('admin', 'user'), searchController.search);
 
+searchRouter.route('/update')
+.post(authController.authorize, authController.restrictTo('admin', 'user'), searchController.relevant);
+
 module.exports = searchRouter;

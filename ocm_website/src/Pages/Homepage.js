@@ -5,13 +5,15 @@ import Header from '../Components/Header';
 import Form from '../Components/QueryForm';
 import SearchGrid from '../Components/SearchGrid';
 import axios from 'axios';
+import { Link, Redirect } from 'react-router-dom';
 
 
 class Homepage extends React.Component {
   constructor() {
     super();
     this.state = {
-      count: 25,
+      count: 50,
+      countForm: "",
       csv: "",
       location: "",
       search: "",
@@ -35,66 +37,125 @@ class Homepage extends React.Component {
       headers: {"Content-Type": "application/json"},
       data: {
         csv: "*",
-        pageMaximum: "25",
+        pageSize: this.state.count,
         pageNumber: "0"
       },
       withCredentials: true
     }).then(res => {
-      console.log("search log");
       const data = res.data.data;
       const results = [];
-      console.log(data);
       data.forEach(element => {
-        if (results.length < this.state.count) {
+        // if (results.length < this.state.count) {
+          const marked = (element._source.relevance !== -1) ? true : false;
+          let selection;
+          if (element._source.relevance === 1) selection = "Marked Yes";
+          if (element._source.relevance === 0) selection = "Marked No";
+          if (element._source.relevance !== 1 && element._source.relevance !== 0) selection = "None";
           results.push({
             id: element._id,
             content: element._source.content.slice(0,750) + "...",
             title: element._source.title,
-            query: element._source.query
+            query: element._source.query,
+            relevance: element._source.relevance,
+            marked,
+            selection
           });
-        }
+        //}
       });
-      this.setState({searchResults: results});
+      this.setState({count: results.length, searchResults: results});
     }).catch(err => console.log(err));
-
-    // ACTUAL IMPLEMENTATION
-    // ACTUAL IMPLEMENTATION
-
-    // BACKUP
-  //   axios.post("http://54.196.155.117:5001/api/v1/search/", {
-  //     query: "*",
-  //     pageMaximum: "25",
-  //     pageNumber: "0"
-  //     }).then(res => {
-  //         const data = res.data.hits.hits;
-  //         const results = [];
-  //         data.forEach(element => {
-  //             if (results.length < this.state.count) {
-  //               results.push({
-  //                 id: element._id,
-  //                 content: element._source.content.slice(0,750) + "...",
-  //                 title: element._source.title,
-  //                 query: element._source.query
-  //               });
-  //             }
-  //           });
-  //       this.setState({searchResults: results});
-  // })
-  // BACKUP
   }
+
+  sendRequestToUpdate = async (url, relevance) => {
+    await axios("http://localhost:8000/api/v1/update", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      data: {
+        url,
+        relevance
+      },
+      withCredentials: true
+    })
+    .then(res => {
+      let results = [...this.state.searchResults];
+      results.forEach(el => {
+        if (el.id === url) {
+          console.log(el);
+          console.log("here");
+          const marked = true;
+          let selection;
+          if (relevance === 1) selection = "Marked Yes";
+          if (relevance === 0) selection = "Marked No";
+          el.marked = marked;
+          el.selection = selection
+        }
+      })
+      console.log(results);
+      this.setState({searchResults: results});
+      });
+        }
+  
+  handleOnYes = async (e, url) => {
+  console.log(url, "yes");
+  await this.sendRequestToUpdate(url, 1);
+}
+
+ handleOnNo = async (e, url) => {
+  console.log(url, "no");
+  await this.sendRequestToUpdate(url, 0);
+}
 
   handleOnCsvChange = (e) => {
     this.setState({csv: e.target.value});
   }
 
   handleOnCountChange = (e) => {
-    this.setState({count: e.target.value});
+    this.setState({countForm: e.target.value});
   }
 
   handleOnCountryChange = (e, value) => {
     if (value) {
       this.setState({location: value.label})
     }
+  }
+
+  handleOnSearchChange = (e) => {
+    this.setState({search: e.target.value});
+  }
+
+  handleOnSearch = (e) => {
+    e.preventDefault();
+      axios("http://localhost:8000/api/v1/search", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        data: {
+          csv: this.state.search,
+          pageSize: 100,
+          pageNumber: "0"
+        },
+        withCredentials: true
+      }).then(res => {
+        console.log(res);
+        const data = res.data.data;
+        const results = [];
+        data.forEach(element => {
+          const marked = (element._source.relevance !== -1) ? true : false;
+          let selection;
+          if (element._source.relevance === 1) selection = "Marked Yes";
+          if (element._source.relevance === 0) selection = "Marked No";
+          if (element._source.relevance !== 1 && element._source.relevance !== 0) selection = "None";
+          results.push({
+            id: element._id,
+            content: element._source.content.slice(0,750) + "...",
+            title: element._source.title,
+            query: element._source.query,
+            relevance: element._source.relevance,
+            marked,
+            selection
+          });
+        });
+        this.setState({searchResults: results, search: ""});
+      });
   }
 
   handleOnSubmit = (e) => {
@@ -105,83 +166,47 @@ class Homepage extends React.Component {
       headers: {"Content-Type": "application/json"},
       data: {
         queries: this.state.csv,
-        count: this.state.count,
+        count: this.state.countForm,
         location: this.state.location
       },
       withCredentials: true
     }).then(res => {
-      console.log("process log:")
-      console.log(res);
       if (res.data.status == "Success") {
         axios("http://localhost:8000/api/v1/search", {
           method: "POST",
           headers: {"Content-Type": "application/json"},
           data: {
             csv: this.state.csv,
-            pageMaximum: this.state.count,
+            pageSize: this.state.countForm,
             pageNumber: "0"
           },
           withCredentials: true
         }).then(res => {
-          console.log("search log:")
-          console.log(res);
-          
-          const data = res.data;
+          const data = res.data.data;
           const results = [];
           data.forEach(element => {
           if (results.length < this.state.count) {
+            const marked = (element._source.relevance !== -1) ? true : false;
+            let selection;
+            if (element._source.relevance === 1) selection = "Marked Yes";
+            if (element._source.relevance === 0) selection = "Marked No";
+            if (element._source.relevance !== 1 && element._source.relevance !== 0) selection = "None";
             results.push({
               id: element._id,
               content: element._source.content.slice(0,750) + "...",
               title: element._source.title,
-              query: element._source.query
+              query: element._source.query,
+              relevance: element._source.relevance,
+              marked,
+              selection
             });
           }
           });
-          this.setState({searchResults: results});
+          this.setState({searchResults: results, csv: "", location: "", countForm: "", count: results.length});
         }).catch(err => console.log(err));
       }
     })
 
-    // axios.post("http://54.196.155.117:5001/api/v1/process/", {
-    //     queries: this.state.csv,
-    //     count: this.state.count,
-    //     location: this.state.location
-    // }
-    // ).then(res => {
-    //     console.log(res);
-    //     if (res.data.Status == "Complete") {
-    //         const resultsArray = this.state.csv.split(",");
-    //         let query = "";
-    //         resultsArray.forEach(result => {
-    //             query += "(" + result + ")";
-    //             query += " or ";
-    //         });
-    //         query = query.slice(0, -4);
-    //         axios.post("http://54.196.155.117:5001/api/v1/search/", {
-    //             query,
-    //             pageMaximum: this.state.count,
-    //             pageNumber: "0"
-    //             }).then(res => {
-    //               // console.log(res);
-    //                 const data = res.data.hits.hits;
-    //                 const results = [];
-    //                 data.forEach(element => {
-    //                     if (results.length < this.state.count) {
-    //                       results.push({
-    //                         id: element._id,
-    //                         content: element._source.content.slice(0,750) + "...",
-    //                         title: element._source.title,
-    //                         query: element._source.query
-    //                       });
-    //                     }
-    //                   });
-    //               this.setState({searchResults: results});
-    //         })
-    //     }
-    // }).catch(err => {
-    //     console.error(err);
-    // })
 }
 
   render() {
@@ -192,13 +217,18 @@ class Homepage extends React.Component {
             <Header />
           </Grid>
           <Grid container>
-            <Form handleOnCsvChange={this.handleOnCsvChange} handleOnCountChange={this.handleOnCountChange} handleOnCountryChange={this.handleOnCountryChange} handleOnSubmit={this.handleOnSubmit}/>
+            <Form searchResults={this.state.searchResults} handleOnCsvChange={this.handleOnCsvChange} handleOnCountChange={this.handleOnCountChange} handleOnCountryChange={this.handleOnCountryChange} handleOnSubmit={this.handleOnSubmit} csv={this.state.csv} count={this.state.countForm} location={this.state.location}/>
           </Grid>
-          <SearchGrid count={this.state.count} searchResults={this.state.searchResults} />
+          <SearchGrid handleOnNo={this.handleOnNo} handleOnYes={this.handleOnYes} count={this.state.count} searchResults={this.state.searchResults} handleOnSearchChange={this.handleOnSearchChange} handleOnSearch={this.handleOnSearch} search={this.state.search}/>
         </Container>
       );
     } else {
-      return <h1>You are not logged in, please login to get access!!</h1>
+      return (
+        <div>
+        <h1>You are not logged in, please login to get access!!</h1>
+        <Link  to="/login">Login</Link>
+      </div>
+      )
     }
   }
 }
