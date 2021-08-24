@@ -1,0 +1,12 @@
+.searchGridContainer {
+    width: 80%;
+    margin: 0 auto;
+    font-family: Roboto, Helvetica, Arial, sans-serif;
+}
+
+.searchGrid {
+  border: solid 1px #5C6784;
+  border-radius: 3px;
+  padding: 10px 15px;
+  margin-top: 15px;
+}

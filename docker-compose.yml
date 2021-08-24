@@ -10,10 +10,10 @@ services:
       - discovery.type=single-node
     volumes:
       - es-data:/usr/share/elasticsearch/data
-      - ./python-api-service/Services/Elasticsearch/stoplist.txt:/usr/share/elasticsearch/config/my_stoplist.txt
-      - ./python-api-service/Services/Elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./ocm_app_api/Services/Elasticsearch/stoplist.txt:/usr/share/elasticsearch/config/my_stoplist.txt
+      - ./ocm_app_api/Services/Elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     networks:
-      - crawlernet  
+      - ocmnet  
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9200"]
       interval: 1s
@@ -21,13 +21,13 @@ services:
       retries: 60
   ocm_ai_job:
     build:
-      context: ./python-api-service
+      context: ./ocm_app_api
     command: python ./API.py
     ports:
       - 5001:5001
     container_name: ocm_api_container
     env_file:
-      - ./python-api-service/.env
+      - ./ocm_app_api/.env
     environment:
       - APP_VERSION:V1
       - SERP_API_KEY:${SERP_API_KEY}
@@ -35,9 +35,41 @@ services:
       ocm_ai_elasticsearch:
         condition: service_healthy
     networks:
-      - crawlernet
+      - ocmnet
+  ocm_ai_user_api:
+    build:
+      context: ./ocm_user_api
+    command: node ./server.js
+    ports:
+      - 8000:8000
+    container_name: ocm_user_api_container
+    env_file:
+      - ./ocm_user_api/.env
+    environment:
+      - APP_VERSION:V1
+      - MONGO:${MONGO}
+      - MONGO_USER:${MONGO_USER}
+      - MONGO_PASSWORD:${MONGO_PASSWORD}
+      - JWT_SECRET:${JWT_SECRET}
+      - JWT_EXPIRES_IN:${JWT_EXPIRES_IN}
+      - JWT_COOKIE_EXPIRES_IN:${JWT_COOKIE_EXPIRES_IN}
+    networks:
+      - ocmnet
+  ocm_ai_website:
+    build:
+      context: ./ocm_website
+    command: npm start
+    ports:
+      - 8085:8085
+    container_name: ocm_website_container
+    volumes:
+      - './ocm_website:/app'
+      - '/app/node_modules'
+    stdin_open: true
+    networks:
+      - ocmnet
 networks: 
-  crawlernet:
+  ocmnet:
     driver: bridge
 
 volumes:
