@@ -19,7 +19,7 @@ services:
       interval: 1s
       timeout: 3s
       retries: 60
-  ocm_ai_job:
+  ocm_ai_app_api:
     build:
       context: ./ocm_app_api
     command: python ./API.py
