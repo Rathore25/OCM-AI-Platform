@@ -1,9 +1,8 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import SearchResult from './SearchResult'
 import { Button, makeStyles, TextField } from '@material-ui/core'
 import Grid from '@material-ui/core/Grid';
-
-import "./SearchGrid.css"
+import Pagination from '@material-ui/lab/Pagination';
 
 const useStyles = makeStyles({
     searchGridContainer: {
@@ -38,12 +37,23 @@ const useStyles = makeStyles({
 
 export default (props) => {
     const classes = useStyles();
+    const [filteredResults, setFilteredResults] = useState([]);
+
+    // const handleOnPageChange = (e, val) => {
+    //     const start = (val - 1) * 10;
+    //     const end = start + 10;
+    //     if (end < props.searchResults.length) {
+    //         setFilteredResults(props.searchResults.slice(start, end));
+    //     } else {
+    //         setFilteredResults(props.searchResults.slice(start, props.searchResults.length));
+    //     }
+    // }
 
     return (
         <div className={classes.searchGridContainer}>
             <Grid container >
                 <Grid item xs={9}>
-                  <h3> Top {props.searchResults.length} Results </h3>  
+                  <h3> Top {props.count} Results - "{props.searchField}" </h3>  
                 </Grid>
                 <Grid item xs={3} className={classes.searchSearchItem}>
                    <TextField className={classes.searchField} value={props.search} onChange={props.handleOnSearchChange} placeholder="Search"/> 
@@ -51,9 +61,10 @@ export default (props) => {
                 </Grid>
             </Grid>
             <div className={classes.searchGrid}>
-                {props.searchResults.map(result => {
-                    return <SearchResult handleOnNo={props.handleOnNo} handleOnYes={props.handleOnYes} key={result.id} name={result.id} marked={result.marked} selection={result.selection} content={result.content} title={result.title} query={result.query} relevance={result.relevance}/>
-                })}
+            <Pagination className={classes.pagination} count={Math.ceil(props.count / 10)} variant="outlined" color="primary" onChange={props.handleOnPageChange} />
+            {props.searchResults.map(result => {
+                return <SearchResult handleOnNo={props.handleOnNo} handleOnYes={props.handleOnYes} key={result.id} name={result.id} marked={result.marked} selection={result.selection} content={result.content} title={result.title} query={result.query} relevance={result.relevance}/>
+            })}
             </div>
         </div>
     )

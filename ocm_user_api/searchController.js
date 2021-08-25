@@ -3,7 +3,7 @@ const catchAsync = require("./catchAsync");
 const axios = require("axios");
 
 exports.process = catchAsync(async (req, res, next) => {
-    const result = await axios.post("http://ocm_ai_app_api:5001/api/v1/process/", {
+    const result = await axios.post("http://52.2.36.59:5001/api/v1/process/", {
         queries: req.body.queries,
         count: req.body.count,
         location: req.body.location
@@ -13,23 +13,8 @@ exports.process = catchAsync(async (req, res, next) => {
         return next(new AppError("Error while processing your request, please try again!!"));
     }
 
-    // const query = modifyQuery(req.body.queries);
-    // const searchResults = await axios.post("http://54.242.116.121:5001/api/v1/search/", {
-    //     query,
-    //     pageSize: req.body.pageSize,
-    //     pageNumber: req.body.pageNumber
-    // })
-
-    // if (!searchResults) {
-    //     return next(new AppError("Search failed!!"));
-    // }
-
-    // const data = searchResults.data.hits.hits;
-    // console.log("successful")
-
     res.status(200).json({
         status: "Success",
-        // data
     })
 });
 
@@ -47,7 +32,7 @@ const modifyQuery = (csv) => {
 
 exports.search = catchAsync(async (req, res, next) => {
     const query = modifyQuery(req.body.csv);
-    const searchRes = await axios.post("http://ocm_ai_app_api:5001/api/v1/search/", {
+    const searchRes = await axios.post("http://52.2.36.59:5001/api/v1/search/", {
         query,
         pageSize: req.body.pageSize,
         pageNumber: req.body.pageNumber
@@ -56,17 +41,18 @@ exports.search = catchAsync(async (req, res, next) => {
     if (!searchRes) {
         return next(new AppError("Search failed!!"));
     }
-    console.log(searchRes);
     const data = searchRes.data.hits.hits;
+    const total = searchRes.data.hits.total.value;
 
     res.status(200).json({
         status: "Success",
-        data
+        data,
+        total
     })
 });
 
 exports.relevant = catchAsync(async (req, res, next) => {
-    const relevanceRes = await axios.post("http://ocm_ai_app_api:5001/api/v1/update/relevance/", {
+    const relevanceRes = await axios.post("http://52.2.36.59:5001/api/v1/update/relevance/", {
         url: req.body.url,
         relevance: req.body.relevance
     });

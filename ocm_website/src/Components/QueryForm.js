@@ -43,25 +43,23 @@ const useStyles = makeStyles({
     }
 })
 
-export default ({handleOnCountChange, handleOnCountryChange, handleOnCsvChange, handleOnSubmit, csv, count, location}) => {
+export default ({handleOnCountChange, handleOnCountryChange, handleOnCsvChange, handleOnSubmit, csv, count, location, process, handleOnProcess}) => {
 
     const classes = useStyles();
 
-    const [clicked, setClicked] = useState(false);
+    // const [clicked, setClicked] = useState(false);
     let button;
 
-    const handleOnClickProcess = (bool) => {
-        setClicked(bool);
-    }
+    // const handleOnClickProcess = (bool) => {
+    //     setClicked(bool);
+    // }
 
-    if (clicked) {
+    if (process) {
         button = (<Button type={'submit'} size="large" className={classes.processingButton} variant="outlined" onClick={handleOnSubmit} disabled>
             Processing
         </Button>)
-    }
-
-    if (csv === "" || !clicked) {
-        button = (<Button type={'submit'} size="large" className={classes.button} variant="outlined" onClick={e => {handleOnClickProcess(true); handleOnSubmit(e)}}>
+    } else {
+        button = (<Button type={'submit'} size="large" className={classes.button} variant="outlined" onClick={e => {handleOnProcess(e, true); handleOnSubmit(e)}}>
             Process Queries
         </Button>)
     }

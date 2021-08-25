@@ -1,12 +1,33 @@
 .searchGridContainer {
-    width: 80%;
-    margin: 0 auto;
-    font-family: Roboto, Helvetica, Arial, sans-serif;
+  width: 90%;
+  margin: 0 auto;
+  font-family: "Roboto, Helvetica, Arial, sans-serif";
 }
 
 .searchGrid {
-  border: solid 1px #5C6784;
-  border-radius: 3px;
-  padding: 10px 15px;
-  margin-top: 15px;
+border: solid 1px #5C6784;
+border-radius: 3px;
+padding: 10px 15px;
+margin-top: 15px;
+}
+
+searchSearchContainer {
+  display: grid;
+  width: 100%;
+}
+
+searchSearchItem {
+  width: 100%;
+  margin: 0;
+  display: flex;
+}
+
+searchField {
+  width: 100%;
+  margin-bottom: -5px;
+}
+
+searchButton {
+  height: "fit-content";
+  margin-left: 10px;
 }
