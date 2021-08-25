@@ -24,7 +24,7 @@ class Homepage extends React.Component {
 
   async componentDidMount() {
 
-    const res = await axios.get("http://localhost:8000/api/v1/users/current-user", {
+    const res = await axios.get("http://52.2.36.59:8000/api/v1/users/current-user", {
       withCredentials: true
     });
 
@@ -32,7 +32,7 @@ class Homepage extends React.Component {
       this.setState({loggedIn: true});
     }
 
-    axios("http://localhost:8000/api/v1/search", {
+    axios("http://52.2.36.59:8000/api/v1/search", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       data: {
@@ -67,7 +67,7 @@ class Homepage extends React.Component {
   }
 
   sendRequestToUpdate = async (url, relevance) => {
-    await axios("http://localhost:8000/api/v1/update", {
+    await axios("http://52.2.36.59:8000/api/v1/update", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       data: {
@@ -125,7 +125,7 @@ class Homepage extends React.Component {
 
   handleOnSearch = (e) => {
     e.preventDefault();
-      axios("http://localhost:8000/api/v1/search", {
+      axios("http://52.2.36.59:8000/api/v1/search", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         data: {
@@ -161,7 +161,7 @@ class Homepage extends React.Component {
   handleOnSubmit = (e) => {
     e.preventDefault();
 
-    axios("http://localhost:8000/api/v1/process/", {
+    axios("http://52.2.36.59:8000/api/v1/process/", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       data: {
@@ -172,7 +172,7 @@ class Homepage extends React.Component {
       withCredentials: true
     }).then(res => {
       if (res.data.status == "Success") {
-        axios("http://localhost:8000/api/v1/search", {
+        axios("http://52.2.36.59:8000/api/v1/search", {
           method: "POST",
           headers: {"Content-Type": "application/json"},
           data: {
