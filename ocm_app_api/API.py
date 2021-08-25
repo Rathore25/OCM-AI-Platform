@@ -67,15 +67,6 @@ def updateRelevance():
         app.logger.error(str(sys.exc_info()[0]) + ' ' + str(sys.exc_info()[1]))
         return jsonify({'Status':'Error','Message':str(sys.exc_info()[1])})
 
-@app.route('/api/v1/model/train/', methods=['POST'])
-@cross_origin()
-def trainModel():
-    try:
-        return jsonify(main.trainModel())
-    except:
-        app.logger.error(str(sys.exc_info()[0]) + ' ' + str(sys.exc_info()[1]))
-        return jsonify({'Status':'Error','Message':str(sys.exc_info()[1])})
-
 logging.basicConfig(filename="logFile.txt",
             level=logging.DEBUG,
             format="%(asctime)s %(levelname)s %(module)s - %(funcName)s: %(message)s",
