@@ -48,7 +48,7 @@ export default () => {
   const handleSubmit = async (e) => {
       e.preventDefault();
 
-      const res = await axios(`http://${process.env.REACT_APP_HOST}/api/v1/auth/login`, {
+      const res = await axios("http://52.2.36.59:8000/api/v1/auth/login", {
         method: "POST",
         withCredentials: true,
         headers: {"Content-Type": "application/json"},

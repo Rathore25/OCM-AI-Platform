@@ -3,7 +3,7 @@ const catchAsync = require("./catchAsync");
 const axios = require("axios");
 
 exports.process = catchAsync(async (req, res, next) => {
-    const result = await axios.post("http://ocm_ai_user_api:5001/api/v1/process/", {
+    const result = await axios.post("http://52.2.36.59:5001/api/v1/process/", {
         queries: req.body.queries,
         count: req.body.count,
         location: req.body.location
@@ -32,7 +32,7 @@ const modifyQuery = (csv) => {
 
 exports.search = catchAsync(async (req, res, next) => {
     const query = modifyQuery(req.body.csv);
-    const searchRes = await axios.post("http://ocm_ai_user_api:5001/api/v1/search/", {
+    const searchRes = await axios.post("http://52.2.36.59:5001/api/v1/search/", {
         query,
         pageSize: req.body.pageSize,
         pageNumber: req.body.pageNumber
@@ -52,7 +52,7 @@ exports.search = catchAsync(async (req, res, next) => {
 });
 
 exports.relevant = catchAsync(async (req, res, next) => {
-    const relevanceRes = await axios.post("http://ocm_ai_user_api:5001/api/v1/update/relevance/", {
+    const relevanceRes = await axios.post("http://52.2.36.59:5001/api/v1/update/relevance/", {
         url: req.body.url,
         relevance: req.body.relevance
     });
