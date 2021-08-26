@@ -4,6 +4,7 @@ import Grid from '@material-ui/core/Grid';
 import Header from '../Components/Header';
 import Form from '../Components/QueryForm';
 import SearchGrid from '../Components/SearchGrid';
+import MyMenu from "../Components/Menu";
 import axios from 'axios';
 import Button from '@material-ui/core/Button';
 import { Link, Redirect } from 'react-router-dom';
