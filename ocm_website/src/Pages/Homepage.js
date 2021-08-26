@@ -265,7 +265,8 @@ class Homepage extends React.Component {
           <Grid container>
             <Header />
           </Grid>
-          <Button onClick={this.handleLogout} style={{position: "relative", right: "-90%", top: "30px"}} variant="outlined" color="secondary">Logout</Button>
+          {/* <Button onClick={this.handleLogout} style={{position: "relative", right: "-90%", top: "30px"}} variant="outlined" color="secondary">Logout</Button> */}
+          <MyMenu handleLogout={this.handleLogout} />
           <Grid container>
             <Form searchResults={this.state.searchResults} handleOnProcess={this.handleOnProcess} handleOnCsvChange={this.handleOnCsvChange} handleOnCountChange={this.handleOnCountChange} handleOnCountryChange={this.handleOnCountryChange} handleOnSubmit={this.handleOnSubmit} csv={this.state.csv} count={this.state.countForm} location={this.state.location} process={this.state.process}/>
           </Grid>
