@@ -25,7 +25,7 @@ class Homepage extends React.Component {
 
   async componentDidMount() {
 
-    const res = await axios.get("http://52.2.36.59:8000/api/v1/users/current-user", {
+    const res = await axios.get("http://" + process.env.REACT_APP_USER_API_IP + "/api/v1/users/current-user", {
       withCredentials: true
     });
 
@@ -33,7 +33,7 @@ class Homepage extends React.Component {
       this.setState({loggedIn: true});
     }
 	
-    await axios("http://52.2.36.59:8000/api/v1/search", {
+    await axios("http://" + process.env.REACT_APP_USER_API_IP + "/api/v1/search", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       data: {
@@ -69,7 +69,7 @@ class Homepage extends React.Component {
   }
 
   handleOnPageChange = async (e, val) => {
-    await axios("http://52.2.36.59:8000/api/v1/search", {
+    await axios("http://" + process.env.REACT_APP_USER_API_IP + "/api/v1/search", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       data: {
@@ -105,7 +105,7 @@ class Homepage extends React.Component {
 
 
   sendRequestToUpdate = async (url, relevance) => {
-    await axios("http://52.2.36.59:8000/api/v1/update", {
+    await axios("http://" + process.env.REACT_APP_USER_API_IP + "/api/v1/update", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       data: {
@@ -162,7 +162,7 @@ class Homepage extends React.Component {
 
   handleOnSearch = async (e) => {
     e.preventDefault();
-      await axios("http://52.2.36.59:8000/api/v1/search", {
+      await axios("http://" + process.env.REACT_APP_USER_API_IP + "/api/v1/search", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         data: {
@@ -203,7 +203,7 @@ class Homepage extends React.Component {
   handleOnSubmit = async (e) => {
     e.preventDefault();
 
-    await axios("http://52.2.36.59:8000/api/v1/process/", {
+    await axios("http://" + process.env.REACT_APP_USER_API_IP + "/api/v1/process/", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       data: {
@@ -213,7 +213,7 @@ class Homepage extends React.Component {
       },
       withCredentials: true
     }).then(async res => {
-      await axios("http://52.2.36.59:8000/api/v1/search", {
+      await axios("http://" + process.env.REACT_APP_USER_API_IP + "/api/v1/search", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       data: {
