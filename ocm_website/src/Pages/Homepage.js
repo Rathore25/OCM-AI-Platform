@@ -8,6 +8,7 @@ import MyMenu from "../Components/Menu";
 import axios from 'axios';
 import Button from '@material-ui/core/Button';
 import { Link, Redirect } from 'react-router-dom';
+import MyMenu from "../Components/Menu";
 
 class Homepage extends React.Component {
   constructor() {
@@ -159,7 +160,7 @@ class Homepage extends React.Component {
   }
 
   handleOnSearchChange = (e) => {
-    this.setState({search: e.target.value, searchField: e.target.value});
+    this.setState({search: e.target.value, searchField: (e.target.value !== "") ? e.target.value : "*"});
   }
 
   handleLogout = async () => {
