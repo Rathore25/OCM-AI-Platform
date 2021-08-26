@@ -51,6 +51,7 @@ export default function CountrySelect({handleChange, location}) {
 }
 
 const countries = [
+  {code: "US", label: "United States"},
   {code: "AL", label:"Alabama"},
   {code: "AK", label:"Alaska"},
   {code: "AS", label: "American Samoa"},
