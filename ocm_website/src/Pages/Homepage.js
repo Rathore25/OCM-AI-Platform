@@ -159,7 +159,7 @@ class Homepage extends React.Component {
   }
 
   handleOnSearchChange = (e) => {
-    this.setState({search: e.target.value, searchField: (e.target.value !== "") ? e.target.value : "*"});
+    this.setState({search: e.target.value, searchField: (e.target.value.trim() !== "") ? e.target.value : "*"});
   }
 
   handleLogout = async () => {
