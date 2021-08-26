@@ -5,6 +5,7 @@ import Header from '../Components/Header';
 import Form from '../Components/QueryForm';
 import SearchGrid from '../Components/SearchGrid';
 import axios from 'axios';
+import Button from '@material-ui/core/Button';
 import { Link, Redirect } from 'react-router-dom';
 
 class Homepage extends React.Component {
@@ -160,6 +161,14 @@ class Homepage extends React.Component {
     this.setState({search: e.target.value, searchField: e.target.value});
   }
 
+  handleLogout = async () => {
+    console.log("button")
+    await axios.get(`http://localhost:8000/api/v1/auth/logout`, {
+      withCredentials: true
+    });
+    this.setState({loggedIn: false});
+  }
+
   handleOnSearch = async (e) => {
     e.preventDefault();
       await axios("http://" + process.env.REACT_APP_USER_API_IP + "/api/v1/search", {
@@ -256,6 +265,7 @@ class Homepage extends React.Component {
           <Grid container>
             <Header />
           </Grid>
+          <Button onClick={this.handleLogout} style={{position: "relative", right: "-90%", top: "30px"}} variant="outlined" color="secondary">Logout</Button>
           <Grid container>
             <Form searchResults={this.state.searchResults} handleOnProcess={this.handleOnProcess} handleOnCsvChange={this.handleOnCsvChange} handleOnCountChange={this.handleOnCountChange} handleOnCountryChange={this.handleOnCountryChange} handleOnSubmit={this.handleOnSubmit} csv={this.state.csv} count={this.state.countForm} location={this.state.location} process={this.state.process}/>
           </Grid>
