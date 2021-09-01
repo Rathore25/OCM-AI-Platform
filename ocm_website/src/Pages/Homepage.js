@@ -164,7 +164,7 @@ class Homepage extends React.Component {
 
   handleLogout = async () => {
     console.log("button")
-    await axios.get(`http://localhost:8000/api/v1/auth/logout`, {
+    await axios.get("http://" + process.env.REACT_APP_USER_API_IP + "/api/v1/auth/logout", {
       withCredentials: true
     });
     this.setState({loggedIn: false});
